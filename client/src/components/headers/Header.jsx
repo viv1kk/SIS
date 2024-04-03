@@ -1,13 +1,26 @@
 import { Link } from "react-router-dom"
 import { Dropdown, Avatar } from 'rsuite'
-
+import { useSelector, useDispatch} from "react-redux"
+import { signout } from "../../redux/user/userSlice"
 
 const Header = () => {
-  const logged = true
-  const imgURL = "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+  const {currentUser} = useSelector(state=>state.user)
+  const dispatch = useDispatch()
+  const pfp = currentUser?.profilePicture || "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+  
   const renderToggle = props => (
-    <Avatar circle {...props} src={imgURL}/>
+    <Avatar circle {...props} src={pfp}/>
   );
+
+  const handleSignout = async()=>{
+    try{
+      await fetch('/api/user/signout');
+      dispatch(signout())
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
 
   return (
     <header className="sticky z-20 top-0 start-0 bg-slate-200">
@@ -31,7 +44,7 @@ const Header = () => {
           </ul>
         </div>
           {
-            logged?(
+            currentUser?(
             <div className="mr-5 basis-32 gap-3 items-center">
               <Dropdown renderToggle={renderToggle} className="">
                 <Dropdown.Item panel style={{ padding: 10, width: 160 }}>
@@ -42,7 +55,7 @@ const Header = () => {
                 <Link to='/profile'><Dropdown.Item>Your profile</Dropdown.Item></Link>
                 <Dropdown.Separator />
                 <Link to='/profile/settings'><Dropdown.Item>Profile Settings</Dropdown.Item></Link>
-                <Dropdown.Item>Sign out</Dropdown.Item>
+                <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
               </Dropdown>
             </div>
             ):(

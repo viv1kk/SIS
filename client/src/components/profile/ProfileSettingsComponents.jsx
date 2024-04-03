@@ -46,6 +46,7 @@ export const EditProfile = ()=>{
             </label>
           </div>
           <input type="file"  id="" className='' hidden/>
+          <input type="text" placeholder='Full Name' className='p-3 rounded-lg text-gray-800'/>
           <input type="email" placeholder='Email' className='p-3 rounded-lg text-gray-800'/>
           <input type="password" placeholder='Password' className='p-3 rounded-lg text-gray-800'/>                    
           <select id="semester" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 ">
