@@ -1,0 +1,45 @@
+[
+    {
+        "semester" : "1",
+        "subjects" : ["DSA","DBMS","C++","C","Java"],
+        "DBMS": ["asdf.pdf", "erte.pdf", "asd.pdf"],
+        "DSA": ["asdf.pdf", "erte.pdf", "asd.pdf"],
+        "C++": ["asdf.pdf", "erte.pdf", "asd.pdf"],
+        "C": ["asdf.pdf", "erte.pdf", "asd.pdf"],
+        "Java": ["asdf.pdf", "erte.pdf", "asd.pdf"]
+        
+    },
+    {
+        "semester" : "2",
+        "subjects" : ["English","Math","Physics","Python","CP"]
+    },
+    {
+        "semester" : "3",
+        "subjects" : ["DSA","DBMS","C++","C","Java"]
+    },
+    {
+        "semester" : "4",
+        "subjects" : ["DSA","DBMS","C++","C","Java"]
+    },
+    {
+        "semester" : "5",
+        "subjects" : ["DSA","DBMS","C++","C","Java"]
+    },
+    {
+        "semester" : "6",
+        "subjects" : ["DSA","DBMS","C++","C","Java"]
+    },
+    {
+        "semester" : "7",
+        "subjects" : ["Computer Networks II","Advanced Computer Architecture","Human Computer Interface","Intellectual Property Rights for Engineers","Cryptography and Network Security"],
+        "Computer Networks II" : ["CN2_Vivek.pdf"],
+        "Advanced Computer Architecture": ["ACA_Vivek.pdf"],
+        "Human Computer Interface" : ["HCI_Vivek.pdf"],
+        "Intellectual Property Rights for Engineers": ["IPR_Vivek.pdf"],
+        "Cryptography and Network Security" : ["CNS_Vivek.pdf"]
+    },
+    {
+        "semester" : "8",
+        "subjects" : ["DSA","DBMS","C++","C","Java"]
+    }
+]
