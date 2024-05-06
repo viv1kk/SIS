@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     semester : {
         type : Number,
         default : null
+    },
+    tags : {
+        type : [String],
+        default : []
     }
 }, {timestamps: true})
 
