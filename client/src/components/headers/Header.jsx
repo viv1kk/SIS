@@ -49,10 +49,10 @@ const Header = () => {
               <Dropdown renderToggle={renderToggle} className="">
                 <Dropdown.Item panel style={{ padding: 10, width: 160 }}>
                   <p>Signed in as</p>
-                  <strong>Vivek</strong>
+                  <strong>{currentUser?.fullName}</strong>
                 </Dropdown.Item>
                 <Dropdown.Separator />
-                <Link to='/profile'><Dropdown.Item>Your profile</Dropdown.Item></Link>
+                <Link to={`/profile/${currentUser?._id}`}><Dropdown.Item>Your profile</Dropdown.Item></Link>
                 <Dropdown.Separator />
                 <Link to='/profile/settings'><Dropdown.Item>Profile Settings</Dropdown.Item></Link>
                 <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>

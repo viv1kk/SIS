@@ -27,7 +27,7 @@ const App = ()=>{
       <Routes>
         <Route element={<AuthenticatedRoute />}>
             <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:id" element={<Profile />} />
             <Route path="/profile/settings" element={<ProfileSettings />} />
             <Route path="/interview" element={<InterviewExperiences />} />
             <Route path='/interview/:post_id' element={<InterviewExperienceIndividual/>}/>
