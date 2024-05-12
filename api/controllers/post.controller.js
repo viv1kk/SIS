@@ -15,12 +15,12 @@ export const createPost = async (req, res, next)=>{
     }
 }
 
-export const timelinePosts = async (req, res, next)=>{
+export const userPosts = async (req, res, next)=>{
     try{
-        const getPosts = await Post.find()
+        const userId= req.user.id;
+        const getPosts = await Post.find({ userId })
         .sort({ createdAt: -1 }) // Sort by createdAt field in descending order (latest first)
         .limit(10) // Limit to 10 entries
-
         res.status(200).json(getPosts)
    }
     catch(error){

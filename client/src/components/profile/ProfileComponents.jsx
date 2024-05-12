@@ -6,7 +6,7 @@ import { updateSuccess } from '../../redux/user/userSlice'
 export const ProfileInfo = ()=>{
     const {currentUser} = useSelector(state=>state.user)
     return (
-        <div className="flex flex-col items-center p-3 min-w-[300px] w-[300px] bg-zinc-200 rounded-xl self-start">
+        <div className="flex flex-col items-center p-3 min-w-[300px] bg-zinc-200 rounded-xl self-start">
             <img src={currentUser?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
             <span className="text-gray-600 font-bold text-2xl">{currentUser?.fullName}</span>
             <div className="flex flex-wrap m-3 mt-6 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
@@ -131,7 +131,7 @@ const Post = ({post}) =>{
             <img src={userData.profilePicture} alt="pic" className="w-14 h-14 mr-2 rounded-full border-4 border-blue-200 "/>
             <div className="flex flex-col pt-1 ml-1 w-[100%]">
                 <div className="flex justify-between">
-                    <Link className="font-semibold"><span>{userData.fullName}</span></Link>
+                    <Link to={`/profile/${userData._id}`}className="font-semibold"><span>{userData.fullName}</span></Link>
                     <small className="font-semibold text-gray-400">{formatDate(post.createdAt)}</small>
                 </div>
                 <hr className="my-2 border-t-2 border-gray-400" />
@@ -158,7 +158,7 @@ const ShowPosts = ()=>{
     // console.log(posts)
     const fetchNewPosts = async () => {
         try {
-        const response = await fetch('/api/post/timelinePosts', {
+        const response = await fetch('/api/post/userPosts', {
             method : 'POST',
             headers : { 
               'Content-Type' : 'application/json',
