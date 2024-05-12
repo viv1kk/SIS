@@ -171,8 +171,8 @@ const ShowPosts = ()=>{
         console.error('Error fetching new posts:', error);
         }
     };
-    fetchNewPosts()
     useEffect(() => {
+        fetchNewPosts()
       // Set up a timer to fetch new posts every 1 sec (adjust interval as needed)
       const timerId = setInterval(fetchNewPosts, 1000); // 1 sec in milliseconds
   

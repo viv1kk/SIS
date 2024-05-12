@@ -1,12 +1,45 @@
 import React from 'react'
+import { useState, useEffect } from 'react'
 import {InterviewPostCard} from '../components/interview/InterviewExperiencesComponents'
 
 const InterviewExperiences = () => {
+
+  const [posts, setPosts] = useState([]);
+    // console.log(posts)
+    const fetchNewPosts = async () => {
+        try {
+        const response = await fetch('/api/interview/getInterviewPostList', {
+            method : 'POST',
+            headers : { 
+              'Content-Type' : 'application/json',
+            }});
+        const newPosts = await response.json();
+
+        // Update posts state with new posts
+        setPosts((prevPosts) => [...newPosts]);
+        } catch (error) {
+        console.error('Error fetching new posts:', error);
+        }
+    };
+    useEffect(() => {
+      fetchNewPosts()
+      // Set up a timer to fetch new posts every 1 sec (adjust interval as needed)
+      const timerId = setInterval(fetchNewPosts, 1000); // 1 sec in milliseconds
+  
+      // Clean up timer on unmount
+      return () => clearInterval(timerId);
+    }, []);
+    // Function to fetch new posts
+    
+
   return (
     <div className='flex flex-col mt-9 w-3/4'>
-        <InterviewPostCard post_id={1} title='Interview Experience At Google' author='Vivek Kohli' body="I am going to share the experience of the first interview of my life it was with Google so let's start I was quite nervous…" />
-        <InterviewPostCard post_id={2} title='Interview Experience At Uber' author='XYZ' body="This Year around February Uber came to my college to hire htmlFor an SDE intern role. Uber team conducted coding around and asked 3 DSA…"/>
-        <InterviewPostCard post_id={3} title='Barclays Interview Experience htmlFor BA3' author='XYZ' body="The company came to our campus in mid-August htmlFor the role of BA3. One of the most confusing things to clear here is BA3 role…"/>
+      {
+        posts.map((post, key)=>{
+          return (<InterviewPostCard postId={post._id} key={key} postTitle={post.postTitle} author={post.userId} postContent={post.postContent} timestamp={post.createdAt} />)
+        })
+      }
+        
     </div>
   )
 }
