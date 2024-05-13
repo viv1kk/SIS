@@ -17,7 +17,7 @@ export const createPost = async (req, res, next)=>{
 
 export const userPosts = async (req, res, next)=>{
     try{
-        const userId= req.user.id;
+        const userId= req.body.userId;
         const getPosts = await Post.find({ userId })
         .sort({ createdAt: -1 }) // Sort by createdAt field in descending order (latest first)
         .limit(10) // Limit to 10 entries

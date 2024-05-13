@@ -2,17 +2,57 @@ import { Link, useParams } from "react-router-dom"
 import { useSelector} from "react-redux"
 import { useState, useEffect } from "react"
 import { updateSuccess } from '../../redux/user/userSlice'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export const ProfileInfo = ()=>{
+    const [user, setUser] = useState({})
     const {currentUser} = useSelector(state=>state.user)
+    const { id } = useParams();
+
+    // console.log(id)
+
+    const getProfileData = async (id)=>{
+        try{
+            const res = await fetch('/api/profile/getUserData', {
+                method : 'POST',
+                headers : { 
+                    'Content-Type' : 'application/json',
+                },
+                body : JSON.stringify({userId : id})
+                })
+                const data = await res.json()
+                if(data.success === false){
+                    console.log("Failed to Fetch Profile Data!")
+                    return
+                }
+                else{
+                    console.log(data)
+                    setUser(data)
+                }
+            }
+            catch(e){
+                console.log(e);
+            }
+        }
+
+    useEffect(()=>{
+        if(id === currentUser._id){
+            setUser(currentUser);
+        }
+        else{
+            getProfileData(id)
+        }
+    },[currentUser,id])
+    
     return (
-        <div className="flex flex-col items-center p-3 min-w-[300px] bg-zinc-200 rounded-xl self-start">
-            <img src={currentUser?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
-            <span className="text-gray-600 font-bold text-2xl">{currentUser?.fullName}</span>
+        <div className="flex flex-col items-center p-3 min-w-[300px] max-w-[300px] bg-zinc-200 rounded-xl self-start">
+            <img src={user?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
+            <span className="text-gray-600 font-bold text-2xl">{user?.fullName}</span>
             <div className="flex flex-wrap m-3 mt-6 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
                 <div className="flex flex-wrap">
                     <strong className="mr-3">Tags : </strong>
-                    <Tags tagList={currentUser?.tags}/>
+                    {(user?.tags)?<Tags tagList={user?.tags}/>:<></>}
                 </div>
             </div>
         </div>
@@ -93,20 +133,25 @@ const Post = ({post}) =>{
     const [userData, setUserData] = useState({})
     // we need to get the user data who posted them using the userId in the post
     const getUserData = async(userId)=>{
-        const res = await fetch('/api/profile/getUserData', {
-        method : 'POST',
-        headers : { 
-            'Content-Type' : 'application/json',
-        },
-        body : JSON.stringify({userId})
-        })
-        const data = await res.json()
-        if(data.success === false){
-            console.log("Failed to create the post!")
-            return
+        try{
+            const res = await fetch('/api/profile/getUserData', {
+            method : 'POST',
+            headers : { 
+                'Content-Type' : 'application/json',
+            },
+            body : JSON.stringify({userId})
+            })
+            const data = await res.json()
+            if(data.success === false){
+                console.log("Failed to create the post!")
+                return 
+            }
+            return data;
+        }
+        catch(e){
+            console.log(e)
         }
         // console.log(data)
-        return data;
     }
 
     function formatDate(isoString) {
@@ -123,8 +168,8 @@ const Post = ({post}) =>{
     }
     useEffect(()=>{ 
         getUserData(post.userId).then(res=>setUserData(res))
-        console.log(userData)
-    },[])
+        // console.log(userData)
+    },[post.userId])
 
     return (
         <div className="flex p-4 my-3 bg-gray-300 rounded-xl">
@@ -137,9 +182,9 @@ const Post = ({post}) =>{
                 <hr className="my-2 border-t-2 border-gray-400" />
                 <div className="flex flex-col max-w-[95%]">
                     <h1 className="font-semibold mt-1 mb-3 text-xl text-wrap line-clamp-1">{post.postTitle}</h1>
-                    <pre className="whitespace-pre-wrap font-mono line-clamp-3 text-wrap">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} className="whitespace-pre-wrap font-mono line-clamp-3 text-wrap">
                         {post.postContent}
-                    </pre>
+                    </ReactMarkdown>
                 </div>
                 <Link to={`/interview/${post._id}`} className="flex items-center mt-4 mb-2 px-3 py-2 w-fit text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                     Full Post
@@ -155,14 +200,17 @@ const Post = ({post}) =>{
 const ShowPosts = ()=>{
 
     const [posts, setPosts] = useState([]);
-    // console.log(posts)
-    const fetchNewPosts = async () => {
+    const {id} = useParams()
+
+    const fetchNewPosts = async (userId) => {
         try {
         const response = await fetch('/api/post/userPosts', {
             method : 'POST',
             headers : { 
               'Content-Type' : 'application/json',
-            }});
+            }, 
+            body : JSON.stringify({ userId })
+        });
         const newPosts = await response.json();
         
         // Update posts state with new posts
@@ -171,21 +219,23 @@ const ShowPosts = ()=>{
         console.error('Error fetching new posts:', error);
         }
     };
+
+
     useEffect(() => {
-        fetchNewPosts()
+        fetchNewPosts(id)
       // Set up a timer to fetch new posts every 1 sec (adjust interval as needed)
-      const timerId = setInterval(fetchNewPosts, 1000); // 1 sec in milliseconds
+      const timerId = setInterval(()=>fetchNewPosts(id), 1000); // 1 sec in milliseconds
   
       // Clean up timer on unmount
       return () => clearInterval(timerId);
-    }, []);
+    }, [id]);
     // Function to fetch new posts
     
     
     return (
         <>
         {
-            posts.map((post, index) =>(<Post post={post} key={index}/>))
+            posts?.map((post, index) =>(<Post post={post} key={index}/>))
         }
         </>
     )
