@@ -50,6 +50,7 @@ export const ProfileInfo = ()=>{
             <img src={user?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
             <span className="text-gray-600 font-bold text-2xl">{user?.fullName}</span>
             <div className="flex flex-wrap m-3 mt-6 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
+                <strong className=" ">LinkedIn : <Link to={`https://www.linkedin.com/in/${user?.linkedin}`} target="_blank" rel="noopener noreferrer" className="before:content-['@']">{user?.linkedin}</Link></strong>
                 <div className="flex flex-wrap">
                     <strong className="mr-3">Tags : </strong>
                     {(user?.tags)?<Tags tagList={user?.tags}/>:<></>}

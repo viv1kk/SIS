@@ -46,8 +46,8 @@ export const InterviewPostCard = (props) => {
   return (
     <div className='bg-zinc-200 p-7 m-2 rounded-xl'>
         <div className='flex justify-between text-zinc-500'>
-            <div className='flex items-center '>
-                <h1 className='bold text-2xl text-gray-800 my-2 font-bold'>{props.postTitle}</h1>
+            <div className='flex items-center max-w-[90%]'>
+                <h1 className='bold text-2xl text-gray-800 my-2 font-bold truncate'>{props.postTitle}</h1>
                 <span className="ml-4 before:content-['@']">
                     {author.fullName}
                 </span>

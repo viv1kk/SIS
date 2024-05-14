@@ -15,13 +15,13 @@ import remarkGfm from "remark-gfm";
 //     )
 // }
 
-export const SearchResult = ()=>{
+export const SearchResult = ({posts})=>{
     return (
         <div className='bg-zinc-200 my-2 rounded-xl p-4'>
             <h1 className='font-bold text-2xl text-gray-800 mx-3 my-4'>Search Results!</h1>
             <hr className="my-2 border-t-2 border-gray-400" />
             <div>
-                {/* <Post/> */}
+                { posts.map((post, index)=> <Post post={post} key={index}/>)}
             </div>
         </div>
     );

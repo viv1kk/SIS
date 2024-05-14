@@ -33,7 +33,8 @@ export const updateProfile = async(req, res, next)=>{
               fullName : req.body.fullName,
               profilePicture: req.body.profilePicture,
               semester : req.body.semester,
-              tags : req.body.tags
+              tags : req.body.tags,
+              linkedin : req.body.linkedin
             },
           },
           { new: true }
@@ -57,7 +58,6 @@ export const getUserData = async(req, res, next)=>{
   try{
     if(!req.body.userId) return next(errorHandler(401, "Invalid Request! Please provide the userId"))
       const user = await User.findOne({_id : req.body.userId})
-      console.log("asdf")
       if(user){
         const {password , ...rest} = user._doc
         if(rest.profilePicture && rest.profilePicture !== ""){

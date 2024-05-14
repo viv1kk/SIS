@@ -1,7 +1,7 @@
 import { useSelector, useDispatch} from "react-redux"
 import { useState,useRef } from "react"
 import { updateSuccess } from '../../redux/user/userSlice'
-
+import { Link } from 'react-router-dom'
 
 export const ProfileSummary = ()=>{
   const {currentUser} = useSelector(state=>state.user)
@@ -11,10 +11,12 @@ export const ProfileSummary = ()=>{
           <span className="mt-3 font-semibold text-lg  uppercase">{currentUser?.fullName}</span>
           <div className="flex flex-col self-start gap-3 w-full mt-5 p-3 bg-black/30 text-white rounded-xl  ">
               <strong className=" ">Semester : {currentUser?.semester}</strong>
+              <strong className=" ">LinkedIn : <Link to={`https://www.linkedin.com/in/${currentUser?.linkedin}`} target="_blank" rel="noopener noreferrer" className="before:content-['@']">{currentUser?.linkedin}</Link></strong>
               <div className="flex flex-wrap ">
                   <strong>Tags : </strong>
                   <Tags tagList={currentUser?.tags}/>
               </div>
+              
           </div>
       </div>
   )
@@ -110,7 +112,7 @@ export const EditProfile = ()=>{
           {/* <input type="email" placeholder='Email' className='p-3 rounded-lg text-gray-800'/> */}
           {/* <input type="password" placeholder='Password' className='p-3 rounded-lg text-gray-800'/>                     */}
           <select id="semester" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 ">
-            <option value={null} defaultValue={null} disabled>Semester</option>
+            <option value={null} selected disabled>Semester</option>
             <option value={1}>1</option>
             <option value={2}>2</option>
             <option value={3}>3</option>
@@ -120,6 +122,7 @@ export const EditProfile = ()=>{
             <option value={7}>7</option>
             <option value={8}>8</option>
           </select>
+          <input type="text" onChange={handleChange} id="linkedin" placeholder='Enter your LinkedIn Username' className='p-3 rounded-lg text-gray-800'/>
           <textarea id="tags" rows="3" onChange={handleChange} placeholder='Input Comma Separate Tags like (C,C++,Java)' className="p-3 rounded-xl"></textarea>
           <>
             <button className='bg-blue-600 w-fit self-center text-white font-semibold text-md px-6 py-2 rounded-xl'>Update</button>

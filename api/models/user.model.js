@@ -25,8 +25,14 @@ const userSchema = new mongoose.Schema({
     tags : {
         type : [String],
         default : []
+    },
+    linkedin : {
+        type : String,
+        default : null
     }
 }, {timestamps: true})
+
+userSchema.index({email:'text', fullName:'text', tags:'text'})
 
 const User = mongoose.model('User', userSchema);
 
