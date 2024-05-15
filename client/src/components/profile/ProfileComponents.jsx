@@ -52,7 +52,7 @@ export const ProfileInfo = ()=>{
         <div className="flex flex-col items-center p-3 min-w-[300px] max-w-[300px] bg-zinc-200 rounded-xl self-start">
             <img src={user?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
             <span className="text-gray-600 font-bold text-2xl">{user?.fullName}</span>
-            <div className="flex flex-col flex-wrap m-3 mt-6 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
+            <div className="flex flex-col flex-wrap m-3 mt-6 gap-2 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
                 <strong className=" ">LinkedIn : <Link to={`https://www.linkedin.com/in/${user?.linkedin}`} target="_blank" rel="noopener noreferrer" className="before:content-['@']">{user?.linkedin}</Link></strong>
                 <div className="flex flex-wrap">
                     <strong className="mr-3">Tags : </strong>
@@ -115,6 +115,7 @@ const MakeNewPost = ()=>{
         body : JSON.stringify(formData)
         })
         const data = await res.json()
+        setFormData({})
         if(data.success === false){
             console.log("Failed to create the post!")
             return
@@ -214,7 +215,7 @@ const Post = ({post}) =>{
             }
             setEditMode(!editMode)
             setEditedPost({})
-            return data;
+            return r;
         }
         catch(e){
             // notify that update failed
@@ -227,8 +228,29 @@ const Post = ({post}) =>{
         setEditMode(false)
     }
     
-    const handleDeletePost = ()=>{
+    const handleDeletePost = async()=>{
+        try{
+            const res = await fetch('/api/post/deletePost', {
+            method : 'POST',
+            headers : { 
+                'Content-Type' : 'application/json',
+            },
+            body : JSON.stringify({postId : post?._id, userId : post?.userId})
+            })
 
+            const r = await res.json()
+            if(r.success === false){
+                console.log("Failed to create the post!")
+                return 
+            }
+            setEditMode(false)
+            setEditedPost({})
+            return r
+        }
+        catch(e){
+            // notify that update failed
+            // console.log(e)
+        }
     }
 
     useEffect(()=>{ 
@@ -326,18 +348,22 @@ const ShowPosts = ()=>{
         // Update posts state with new posts
         if(newPosts && newPosts.length > 0)
             setPosts((prevPosts) => [...newPosts]);
+        else 
+            setPosts([])
+            // setPosts(newPosts)
         } catch (error) {
         console.error('Error fetching new posts:', error);
         }
     };
 
+    console.log(posts)
 
     useEffect(() => {
         fetchNewPosts(id)
-      // Set up a timer to fetch new posts every 1 sec (adjust interval as needed)
-      const timerId = setInterval(()=>fetchNewPosts(id), 1000); // 1 sec in milliseconds
-  
-      // Clean up timer on unmount
+        // Set up a timer to fetch new posts every 1 sec (adjust interval as needed)
+        const timerId = setInterval(()=>fetchNewPosts(id), 1000); // 1 sec in milliseconds
+    
+        // Clean up timer on unmount
       return () => clearInterval(timerId);
     }, [id]);
     // Function to fetch new posts

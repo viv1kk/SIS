@@ -40,11 +40,19 @@ export const editPost = async (req, res, next)=>{
 }
 export const deletePost = async (req, res, next)=>{
     try{
+        const {postId, userId} = req.body
         // const {postTitle, postContent, userId=req.user.id } = req.body
-        // if(!postTitle || !postContent || !userId) return next(errorHandler(401, "Invalid Post! Please give Title and Description"))
-        // const newPost = new Post({ postTitle, postContent, userId })
-        // await newPost.save()
-        // res.status(201).json({message:"Post Created Successfully", userId, postTitle, postContent})
+        if(!postId || !userId) return next(errorHandler(401, "Error! Couldn'd delete the Post"))
+        if(userId !== req.user.id) return next(errorHandler(401, "Unauthorized to delete this Post!"))
+                    
+        const r = await Post.deleteOne({ _id: postId }); // returns {deletedCount: 1}
+
+        if(r && r.deletedCount > 0){
+            res.status(201).json({message:"Post Deleted Successfully!"})
+        }
+        else{
+            next()
+        }
     }
     catch(error){
         console.log(error)
