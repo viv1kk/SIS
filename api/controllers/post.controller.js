@@ -15,6 +15,34 @@ export const createPost = async (req, res, next)=>{
     }
 }
 
+export const editPost = async (req, res, next)=>{
+    try{
+        const {postTitle, postContent, userId=req.user.id } = req.body
+        if(!postTitle || !postContent || !userId) return next(errorHandler(401, "Invalid Post! Please give Title and Description"))
+        const newPost = new Post({ postTitle, postContent, userId })
+        await newPost.save()
+        res.status(201).json({message:"Post Created Successfully", userId, postTitle, postContent})
+    }
+    catch(error){
+        console.log(error)
+        next(error);
+    }
+}
+export const deletePost = async (req, res, next)=>{
+    try{
+        // const {postTitle, postContent, userId=req.user.id } = req.body
+        // if(!postTitle || !postContent || !userId) return next(errorHandler(401, "Invalid Post! Please give Title and Description"))
+        // const newPost = new Post({ postTitle, postContent, userId })
+        // await newPost.save()
+        // res.status(201).json({message:"Post Created Successfully", userId, postTitle, postContent})
+    }
+    catch(error){
+        console.log(error)
+        next(error);
+    }
+}
+
+
 export const userPosts = async (req, res, next)=>{
     try{
         const userId= req.body.userId;

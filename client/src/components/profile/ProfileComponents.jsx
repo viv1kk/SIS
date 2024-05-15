@@ -4,6 +4,9 @@ import { useState, useEffect } from "react"
 import { updateSuccess } from '../../redux/user/userSlice'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import { Dropdown, Avatar } from 'rsuite'
 
 export const ProfileInfo = ()=>{
     const [user, setUser] = useState({})
@@ -167,18 +170,44 @@ const Post = ({post}) =>{
         
         return `${month} ${paddedDay}, ${year}`;
     }
+
+    const renderToggle = props => (
+        <FontAwesomeIcon { ...props} className="text-gray-600 mx-1 px-2 hover:text-xl " icon={faEllipsisVertical} />
+      );
+
+      const handleEditPost=(postId)=>{
+
+      }
+      const handleDeletePost = (postId)=>{
+
+      }
+
     useEffect(()=>{ 
         getUserData(post.userId).then(res=>setUserData(res))
         // console.log(userData)
     },[post.userId])
 
     return (
-        <div className="flex p-4 my-3 bg-gray-300 rounded-xl">
-            <img src={userData.profilePicture} alt="pic" className="w-14 h-14 mr-2 rounded-full border-4 border-blue-200 "/>
+        <div className="flex p-4 my-3 bg-gray-300 rounded-xl transition-all">
+            <img src={userData?.profilePicture} alt="pic" className="w-14 h-14 mr-2 rounded-full border-4 border-blue-200 "/>
             <div className="flex flex-col pt-1 ml-1 w-[100%]">
                 <div className="flex justify-between">
-                    <Link to={`/profile/${userData._id}`}className="font-semibold"><span>{userData.fullName}</span></Link>
-                    <small className="font-semibold text-gray-400">{formatDate(post.createdAt)}</small>
+                    <Link to={`/profile/${userData._id}`}className="font-semibold"><span>{userData?.fullName}</span></Link>
+                    <div className="flex items-center gap-5">
+                        <small className="font-semibold text-gray-400">{formatDate(post?.createdAt)}</small>
+                        {/* <small>sfd</small> */}
+                       
+                        <Dropdown renderToggle={renderToggle} placement="bottomEnd" className="">
+                            <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
+                                <Link onClick={handleEditPost}><Dropdown.Item>Edit Post</Dropdown.Item></Link>
+                            </Dropdown.Item>
+                            <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
+                                <Link onClick={handleDeletePost}><Dropdown.Item>Delete Post</Dropdown.Item></Link>
+                            </Dropdown.Item>
+                        </Dropdown>
+
+
+                    </div>
                 </div>
                 <hr className="my-2 border-t-2 border-gray-400" />
                 <div className="flex flex-col max-w-[95%]">
@@ -215,7 +244,8 @@ const ShowPosts = ()=>{
         const newPosts = await response.json();
         
         // Update posts state with new posts
-        setPosts((prevPosts) => [...newPosts]);
+        if(newPosts && newPosts.length > 0)
+            setPosts((prevPosts) => [...newPosts]);
         } catch (error) {
         console.error('Error fetching new posts:', error);
         }
