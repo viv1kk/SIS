@@ -14,19 +14,17 @@ import cors from 'cors'
 dotenv.config()
 const app = express()
 
-const dirname = path.dirname("C:\\Users\\vivek\\Desktop\\mp\\mpv4\\")
-const buildPath = path.join("", "./client/dist")
-console.log(buildPath)
-app.use(express.static(buildPath))
+// const dirname = path.dirname("/home/ubuntu/SIS")
+// const buildPath = path.join("", "../client/dist")
+
+// app.use(express.static(buildPath))
 app.use(cors({
     origin:"*"
 }))
 
-
-// app.get("/*", function(req, res){
-//     console.log(dirname)
+// app.get("*", function(req, res){
 //     res.sendFile(
-//         path.join(dirname, ".\\mpv4\\client\\dist\\index.html"),
+//         path.join(dirname, "./SIS/client/dist/index.html"),
 //         function(err){
 //             if(err){
 //                 res.status(500).send(err);
@@ -34,6 +32,7 @@ app.use(cors({
 //         }
 //     )
 // })
+
 
 app.listen(process.env.PORT, ()=>{
     console.log(`Server listening on ${process.env.PORT}`)
