@@ -39,7 +39,7 @@ export const TimelineFeed = ()=>{
             }
             });
         const feed = await response.json();
-            console.log(feed)
+            // console.log(feed)
         // Update posts state with new posts
         setFeed(feed);
         } catch (error) {

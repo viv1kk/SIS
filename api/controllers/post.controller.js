@@ -17,11 +17,21 @@ export const createPost = async (req, res, next)=>{
 
 export const editPost = async (req, res, next)=>{
     try{
-        const {postTitle, postContent, userId=req.user.id } = req.body
-        if(!postTitle || !postContent || !userId) return next(errorHandler(401, "Invalid Post! Please give Title and Description"))
-        const newPost = new Post({ postTitle, postContent, userId })
-        await newPost.save()
-        res.status(201).json({message:"Post Created Successfully", userId, postTitle, postContent})
+        const {postTitle, postContent, postId, userId } = req.body
+        if(!postTitle || !postContent || !postId || !userId) return next(errorHandler(401, "Invalid Post! Please give Title and Description"))
+            if(req.user.id !== userId) return next(errorHandler(401, "Unauthorized to edit this Post"))
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {
+              $set: {
+                postTitle,
+                postContent
+              },
+            },
+            { new: true }
+          );
+        res.status(201).json({message:"Post Created Successfully", updatedPost})
     }
     catch(error){
         console.log(error)

@@ -38,6 +38,7 @@ const Timeline = () => {
 
   const handleTimeline = (e)=>{
     e.preventDefault();
+    getPeopleData()
     setSearchToggle(false)
     setTimelineToggle(true)
   }
@@ -61,7 +62,6 @@ const Timeline = () => {
   useEffect(()=>{
     getPeopleData()
   },[])
-
 
   return (
     <div className='flex gap-4 min-w-[90%] max-w-[90%] my-4'>

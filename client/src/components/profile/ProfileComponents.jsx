@@ -52,7 +52,7 @@ export const ProfileInfo = ()=>{
         <div className="flex flex-col items-center p-3 min-w-[300px] max-w-[300px] bg-zinc-200 rounded-xl self-start">
             <img src={user?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
             <span className="text-gray-600 font-bold text-2xl">{user?.fullName}</span>
-            <div className="flex flex-wrap m-3 mt-6 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
+            <div className="flex flex-col flex-wrap m-3 mt-6 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
                 <strong className=" ">LinkedIn : <Link to={`https://www.linkedin.com/in/${user?.linkedin}`} target="_blank" rel="noopener noreferrer" className="before:content-['@']">{user?.linkedin}</Link></strong>
                 <div className="flex flex-wrap">
                     <strong className="mr-3">Tags : </strong>
@@ -134,7 +134,10 @@ const MakeNewPost = ()=>{
 
 const Post = ({post}) =>{
     const pfp = "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+    const {currentUser} = useSelector(state=>state.user)
     const [userData, setUserData] = useState({})
+    const [editMode, setEditMode] = useState(false)
+    const [editedPost, setEditedPost] = useState({})
     // we need to get the user data who posted them using the userId in the post
     const getUserData = async(userId)=>{
         try{
@@ -155,7 +158,6 @@ const Post = ({post}) =>{
         catch(e){
             console.log(e)
         }
-        // console.log(data)
     }
 
     function formatDate(isoString) {
@@ -173,18 +175,64 @@ const Post = ({post}) =>{
 
     const renderToggle = props => (
         <FontAwesomeIcon { ...props} className="text-gray-600 mx-1 px-2 hover:text-xl " icon={faEllipsisVertical} />
-      );
+    );
 
-      const handleEditPost=(postId)=>{
+    const handleChange = (e)=>{
+        setEditedPost({...editedPost, [e.target.id] : e.target.value})
+    }
 
-      }
-      const handleDeletePost = (postId)=>{
+    const handleInitEdit=()=>{
+        const data = {
+            userId : post?.userId,
+            postId : post?._id,
+            editedPostTitle : post?.postTitle,
+            editedPostContent : post?.postContent
+        }
+        setEditedPost(data)
+        setEditMode(!editMode)
+    }
+    const handleEditPost= async()=>{
+        const data = {
+            userId : post?.userId,
+            postId : post?._id,
+            postTitle : editedPost?.editedPostTitle,
+            postContent : editedPost?.editedPostContent
+        }
 
-      }
+        try{
+            const res = await fetch('/api/post/editPost', {
+            method : 'POST',
+            headers : { 
+                'Content-Type' : 'application/json',
+            },
+            body : JSON.stringify(data)
+            })
+            const r = await res.json()
+            if(r.success === false){
+                console.log("Failed to create the post!")
+                return 
+            }
+            setEditMode(!editMode)
+            setEditedPost({})
+            return data;
+        }
+        catch(e){
+            // notify that update failed
+            console.log(e)
+        }
+    }
+
+    const handleCancelEditPost = ()=>{
+        setEditedPost({})
+        setEditMode(false)
+    }
+    
+    const handleDeletePost = ()=>{
+
+    }
 
     useEffect(()=>{ 
         getUserData(post.userId).then(res=>setUserData(res))
-        // console.log(userData)
     },[post.userId])
 
     return (
@@ -196,32 +244,64 @@ const Post = ({post}) =>{
                     <div className="flex items-center gap-5">
                         <small className="font-semibold text-gray-400">{formatDate(post?.createdAt)}</small>
                         {/* <small>sfd</small> */}
-                       
-                        <Dropdown renderToggle={renderToggle} placement="bottomEnd" className="">
-                            <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
-                                <Link onClick={handleEditPost}><Dropdown.Item>Edit Post</Dropdown.Item></Link>
-                            </Dropdown.Item>
-                            <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
-                                <Link onClick={handleDeletePost}><Dropdown.Item>Delete Post</Dropdown.Item></Link>
-                            </Dropdown.Item>
-                        </Dropdown>
+                        {
+                            (post.userId == currentUser?._id+"")?
+                            <Dropdown renderToggle={renderToggle} placement="bottomEnd" className="">
+                                <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
+                                    <Link onClick={handleInitEdit}><Dropdown.Item>Edit Post</Dropdown.Item></Link>
+                                </Dropdown.Item>
+                                <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
+                                    <Link onClick={handleDeletePost}><Dropdown.Item>Delete Post</Dropdown.Item></Link>
+                                </Dropdown.Item>
+                            </Dropdown>:<></>
 
-
+                        }
                     </div>
                 </div>
                 <hr className="my-2 border-t-2 border-gray-400" />
                 <div className="flex flex-col max-w-[95%]">
-                    <h1 className="font-semibold mt-1 mb-3 text-xl text-wrap line-clamp-1">{post.postTitle}</h1>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} className="whitespace-pre-wrap font-mono line-clamp-3 text-wrap">
-                        {post.postContent}
-                    </ReactMarkdown>
+                    {
+                        (editMode)?
+                        <>
+                            <form className="flex flex-col items-center p-3">
+                                <input type="text" id="editedPostTitle" onChange={handleChange} value={editedPost?.editedPostTitle} placeholder="Edit Post Title" className="my-2 size-xl p-2 border-solid border-4 w-[100%] border-gray-400 rounded-2xl"/>
+                                <textarea id="editedPostContent" onChange={handleChange} placeholder="Edit Post Content..." cols="30" rows="2" className=" w-[100%] border-solid border-4 border-gray-400 rounded-2xl p-3">{editedPost?.editedPostContent}</textarea>
+                            </form>
+                        </>
+                        :
+                        <>
+                            <h1 className="font-semibold mt-1 mb-3 text-xl text-wrap line-clamp-1">{post.postTitle}</h1>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} className="whitespace-pre-wrap font-mono line-clamp-3 text-wrap">
+                                {post.postContent}
+                            </ReactMarkdown>
+                        </>
+                    }
                 </div>
-                <Link to={`/interview/${post._id}`} className="flex items-center mt-4 mb-2 px-3 py-2 w-fit text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                    Full Post
-                    <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                    </svg>
-                </Link>
+                {
+                    (editMode)?
+                    <>
+                    <div className="flex gap-5 px-3">
+                        <Link onClick={handleEditPost} className="flex items-center mt-4 mb-2 px-3 py-2 w-fit text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                            Save Edit
+                            <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </Link>
+                        <Link onClick={handleCancelEditPost} className="flex items-center mt-4 mb-2 px-3 py-2 w-fit text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                            Cancel Edit
+                        </Link>
+                    </div>
+                    </>
+                    :
+                    <>
+                        <Link to={`/interview/${post._id}`} className="flex items-center mt-4 mb-2 px-3 py-2 w-fit text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                            Full Post
+                            <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </Link>
+                    </>
+                }
             </div>
         </div>
     )
@@ -271,11 +351,3 @@ const ShowPosts = ()=>{
         </>
     )
 }
-
-
-
-
-
-
-
-
