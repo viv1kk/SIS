@@ -49,7 +49,7 @@ export const search = async (req, res, next)=>{
         });
 
         let post = await Post.find({$text : {$search : req.body.search}})
-        .sort({createdAt: -1})
+        .sort({updatedAt: -1})
         
         // Sort by createdAt field in descending order (latest first)
         // .limit(10) Limit to 10 entries
