@@ -300,7 +300,7 @@ const DownloadListitemComponent = ({data}) => {
     "pptx" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0MLmAYQ6_XXQEuuWXY741t3cZexe5fFBFUwtwgJWmGA&s"
   }
   return (
-    <Link to={data.fileLink}>
+    <Link to={data.fileLink} target="_blank" rel="noopener noreferrer">
     <div  className='flex flex-row justify-between items-center w-full p-5 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
         <div className='flex items-center w-full'>
             <img className="inline w-14 mr-3" src={ext[data.fileExt]} alt="" />

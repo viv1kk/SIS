@@ -37,7 +37,8 @@ export const generateUniqueFileName = (ext) =>{
       Key: key, 
       Body: buf,
       ContentEncoding: 'base64',
-      ContentType: type
+      ContentType: type,
+      ACL : 'public-read'
     };
 
     s3Bucket.putObject(data, function(err, data){
@@ -45,7 +46,7 @@ export const generateUniqueFileName = (ext) =>{
           console.log(err);
           console.log('Error uploading data: ', data); 
         } else {
-          console.log('successfully uploaded the image!');
+          console.log('successfully uploaded the document!');
         }
     });
   }
@@ -56,7 +57,7 @@ export const generateUniqueFileName = (ext) =>{
     const params = {
       Bucket: 'sis.storage',
       Key: `profilePictures/${name}`,
-      Expires : 86400
+      Expires : 86400,
     };
   
     // Generate a presigned URL for the image with a validity period (e.g., 1 day)
@@ -66,13 +67,14 @@ export const generateUniqueFileName = (ext) =>{
   }
 
 
-  export const generateS3DataUrl = (key, originalName)=> {
+  export const generateS3DataUrl = (key, originalName, fileType)=> {
     const s3 = new AWS.S3();
     const params = {
       Bucket: 'sis.storage',
       Key: key,
       Expires : 86400,
-      ResponseContentDisposition: `attachment; filename ="${originalName}"`
+      ResponseContentDisposition: `inline; filename ="${originalName}"`,
+
     };
   
     // Generate a presigned URL for the image with a validity period (e.g., 1 day)

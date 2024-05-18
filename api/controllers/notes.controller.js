@@ -33,7 +33,7 @@ export const getNotesList = async (req, res, next)=>{
       // .limit(10) // Limit to 10 entries
 
       getList.forEach(item => {
-        const link = generateS3DataUrl(item.fileLink, `${item.fileName}.${item.fileExt}`)
+        const link = generateS3DataUrl(item.fileLink, `${item.fileName}.${item.fileExt}`, item.fileType)
         item.fileLink = link;
         return item
       })
