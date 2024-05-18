@@ -3,7 +3,7 @@ import {DownloadComponent, UploadComponent} from '../components/notes/NotesCompo
 import {Link} from 'react-router-dom'
 
 const Notes = () => {
-    const[uploadMode, setUploadMode] = useState(false)
+    const[uploadMode, setUploadMode] = useState()
 
     const handleUploadMode = ()=>{
         setUploadMode(!uploadMode)
@@ -25,7 +25,7 @@ const Notes = () => {
         <hr className='border-2 my-8 border-gray-200'/>
         <div className='flex flex-col'>
             {
-                (!uploadMode)?<UploadComponent/>:<DownloadComponent/>
+                (uploadMode)?<UploadComponent/>:<DownloadComponent/>
             }  
         </div>
     </div>

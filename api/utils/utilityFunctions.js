@@ -64,3 +64,19 @@ export const generateUniqueFileName = (ext) =>{
   
     return url;
   }
+
+
+  export const generateS3DataUrl = (key, originalName)=> {
+    const s3 = new AWS.S3();
+    const params = {
+      Bucket: 'sis.storage',
+      Key: key,
+      Expires : 86400,
+      ResponseContentDisposition: `attachment; filename ="${originalName}"`
+    };
+  
+    // Generate a presigned URL for the image with a validity period (e.g., 1 day)
+    const url = s3.getSignedUrl('getObject', params);
+  
+    return url;
+  }
