@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom' 
 // import {DownloadListitemComponent} from '../components/notes/NotesComponents';
+import { useSelector} from "react-redux"
+
 
 export const UploadComponent = ()=>{
   const subject = useRef(null);
@@ -8,7 +10,8 @@ export const UploadComponent = ()=>{
   const fileName = useRef(null);
   const fileDesc = useRef(null);
 
-  const [sem, setSem] = useState('1');
+  const {currentUser } = useSelector(state=>state.user)
+  const [sem, setSem] = useState(()=>((currentUser?.semester)?currentUser.semester:"1"));
   const [sub, setSub] = useState(null)
   const [data, setData] = useState([])
   const [formData, setFormData] = useState({})
@@ -49,6 +52,8 @@ export const UploadComponent = ()=>{
   useEffect(()=>{
     if(data && data.length>0)
       setSub(data[0].subjectCode)
+    else
+      setSub('')
   }, [data])
 
   useEffect(()=>{
@@ -117,7 +122,7 @@ export const UploadComponent = ()=>{
     <div className='flex justify-center gap-4'>
             <div className='w-full'>
                 <label htmlFor="semester" className="block mb-2 text-sm font-medium text-gray-900 ">Select the Semester</label>
-                <select onChange={(e)=>{handleSem(e)}} ref={semester} id="semester" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                <select onChange={(e)=>{handleSem(e)}} defaultValue={(currentUser?.semester)?currentUser.semester:"1"} ref={semester} id="semester" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                     <option value="1">Semester 1</option>
                     <option value="2">Semester 2</option>
                     <option value="3">Semester 3</option>
@@ -167,8 +172,9 @@ export const UploadComponent = ()=>{
 export const DownloadComponent = ()=>{
   const subject = useRef(null);
   const semester = useRef(null);
-  
-  const [sem, setSem] = useState('1');
+  const {currentUser } = useSelector(state=>state.user)
+
+  const [sem, setSem] = useState(()=>((currentUser?.semester)?currentUser.semester:"1"));
   const [sub, setSub] = useState("")
   const [data, setData] = useState([])
   const [notesList, setNotesList] = useState([])
@@ -240,9 +246,9 @@ export const DownloadComponent = ()=>{
       getNotesList().then(x =>{
         if(x && x.length > 0)
           setNotesList(x)
+        else setNotesList([])
       })
     },[sub])
-
 
     const handleSem = (e)=>{
         setSem(e.target.value);
@@ -256,7 +262,7 @@ export const DownloadComponent = ()=>{
     <div className='flex justify-center gap-4'>
             <div className='w-full'>
                 <label htmlFor="semester" className="block mb-2 text-sm font-medium text-gray-900 ">Select the Semester</label>
-                <select onChange={(e)=>{handleSem(e)}} defaultValue={"1"} ref={semester} id="semester" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                <select onChange={(e)=>{handleSem(e)}} defaultValue={(currentUser?.semester)?currentUser.semester:"1"} ref={semester} id="semester" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                     <option value="1">Semester 1</option>
                     <option value="2">Semester 2</option>
                     <option value="3">Semester 3</option>

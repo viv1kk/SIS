@@ -9,6 +9,7 @@ import interviewRoutes from "./routes/interview.route.js"
 import feedRoutes from "./routes/feed.route.js"
 import dataRoutes from "./routes/data.route.js"
 import notesRoutes from "./routes/notes.route.js"
+import pyqRoutes from "./routes/pyq.route.js"
 
 import path from 'path'
 import cors from 'cors'
@@ -55,6 +56,7 @@ app.use('/api/interview', interviewRoutes)
 app.use('/api/feed', feedRoutes)
 app.use('/api/notes', notesRoutes)
 app.use('/api/data', dataRoutes)
+app.use('/api/pyq', pyqRoutes)
 
 app.use((err, req, res, next)=>{
     const statusCode = err.statusCode || 500;
