@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom' 
 // import {DownloadListitemComponent} from '../components/notes/NotesComponents';
 
 export const UploadComponent = ()=>{
@@ -168,27 +169,79 @@ export const DownloadComponent = ()=>{
   const semester = useRef(null);
   
   const [sem, setSem] = useState('1');
-  const [sub, setSub] = useState(null)
-  const [data, setData] = useState(require('../../dummy/notes.json'))
+  const [sub, setSub] = useState("")
+  const [data, setData] = useState([])
+  const [notesList, setNotesList] = useState([])
+
+  const getSubjectData = async()=>{
+    try{
+      const res = await fetch('/api/data/getSubjectData', {
+      method : 'POST',
+      headers : { 
+          'Content-Type' : 'application/json',
+      }
+      })
+      const r = await res.json()
+      // console.log(r)
+      if(r.success === false){
+          console.log("Failed to create the post!")
+          return 
+      }
+      return r
+    }
+    catch(e){
+        // notify that update failed
+        console.log(e)
+    }
+  }
+
+  const getNotesList = async()=>{
+    try{
+      const res = await fetch('/api/notes/getNotesList', {
+      method : 'POST',
+      headers : { 
+          'Content-Type' : 'application/json',
+      }, 
+      body : JSON.stringify({subjectCode : sub})
+      })
+      const r = await res.json()
+      // console.log(r)
+      if(r.success === false){
+          console.log("Failed to fetch the notes List!")
+          return 
+      }
+      return r
+    }
+    catch(e){
+        // notify that update failed
+        console.log(e)
+    }
+  }
+
 
   useEffect(()=>{
-    let x = require('../../dummy/notes.json')
-    x.forEach(element => {
-        if (element.semester === sem){
-          setData(element)
-          return;
+    getSubjectData().then(x =>{
+      let d = []
+      x.forEach(element => {
+        if (element.semester === parseInt(sem)){
+          d = [...d, element]
         }
       });
-    },[sem])
+      setData(d)
+      if(d && d.length > 0){
+        setSub(d[0].subjectCode)
+      }
+    })  
+  },[sem])
+
+  // console.log(data)
     useEffect(()=>{
-        let x = require('../../dummy/notes.json')
-        x.forEach(element => {
-            if (element.semester === sem){
-              setSub(element.subjects[0])
-              return;
-            }
-          });
-    },[sem])
+      console.log("Now fetch the list from server")
+      getNotesList().then(x =>{
+        if(x && x.length > 0)
+          setNotesList(x)
+      })
+    },[sub])
 
 
     const handleSem = (e)=>{
@@ -203,7 +256,7 @@ export const DownloadComponent = ()=>{
     <div className='flex justify-center gap-4'>
             <div className='w-full'>
                 <label htmlFor="semester" className="block mb-2 text-sm font-medium text-gray-900 ">Select the Semester</label>
-                <select onChange={(e)=>{handleSem(e)}} ref={semester} id="semester" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                <select onChange={(e)=>{handleSem(e)}} defaultValue={"1"} ref={semester} id="semester" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                     <option value="1">Semester 1</option>
                     <option value="2">Semester 2</option>
                     <option value="3">Semester 3</option>
@@ -218,18 +271,18 @@ export const DownloadComponent = ()=>{
                 <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-900">Select the Subject</label>
                 <select ref={subject} id="subject" onChange={(e)=>{handleSub(e)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     {
-                        data?.subjects?.map((s, ind)=>(
-                            <option value={s} key={ind}>{s}</option>
+                        data?.map((s, ind)=>(
+                            <option value={s.subjectCode} key={s.subjectCode}>{`${s.subjectName} (${s.subjectCode})`}</option>
                         ))
                     }
                 </select>
             </div>  
         </div>
-        <div className='w-4/5 flex flex-col self-center my-7 border-2 border-gray-200 p-5'>
+        <div className=' w-11/12 flex flex-col gap-2 self-center my-7 border-2 border-gray-200 p-5 cursor-pointer'>
             { 
             // console.log(sub)
-                data[sub]?.map((el, ind)=>(
-                    <DownloadListitemComponent title={el} key={ind}/>
+                notesList?.map((el, ind)=>(
+                    <DownloadListitemComponent data={el} key={ind}/>
                 ))
             }
         </div>
@@ -237,16 +290,32 @@ export const DownloadComponent = ()=>{
   )
 }
 
-const DownloadListitemComponent = (props) => {
+const DownloadListitemComponent = ({data}) => {
+  const ext = { 
+    "pdf" : "https://media.istockphoto.com/id/1298834280/vector/pdf-icon-major-file-format-vector-icon-illustration.jpg?s=612x612&w=0&k=20&c=uA4lg3z8Od32TGuT6zOhMkEVJqH2kCE-_OI8ybalmac=",
+    "doc" : "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/.docx_icon.svg/2048px-.docx_icon.svg.png",
+    "docx" : "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/.docx_icon.svg/2048px-.docx_icon.svg.png",
+    "zip" : "https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/512x512/folder_zip.png",
+    "ppt" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0MLmAYQ6_XXQEuuWXY741t3cZexe5fFBFUwtwgJWmGA&s",
+    "pptx" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0MLmAYQ6_XXQEuuWXY741t3cZexe5fFBFUwtwgJWmGA&s"
+  }
   return (
-    <div className='flex flex-row justify-between items-center w-full p-5 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-md hover:shadow-xl'>
-        <div className='flex items-center'>
-            <img className="inline w-10 mr-3" src="https://i.pinimg.com/474x/3a/0d/51/3a0d510e8aff0312920ce1bcb5b022ac.jpg" alt="" />
-            <span className="text-xl ms-2">
-                {props.title}
-            </span>
+    <Link to={data.fileLink}>
+    <div  className='flex flex-row justify-between items-center w-full p-5 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
+        <div className='flex items-center w-full'>
+            <img className="inline w-14 mr-3" src={ext[data.fileExt]} alt="" />
+            {/* <i className={`fa-solid fa-file-${data.fileExt} fa-2xl mr-3`}></i> */}
+            <div className='flex flex-col w-full'>
+              <span className="text-md mx-2 font-semibold">
+                  {`${data.fileName}.${data.fileExt}`}
+              </span>
+              <p className='p-2 text-gray-500'>{data.fileDescription}</p>
+              
+            </div>
         </div>
-        <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Download</button>
+
+    
     </div>    
+    </Link>
   )
 }
