@@ -8,6 +8,7 @@ import postRoutes from "./routes/post.route.js"
 import interviewRoutes from "./routes/interview.route.js"
 import feedRoutes from "./routes/feed.route.js"
 import dataRoutes from "./routes/data.route.js"
+import notesRoutes from "./routes/notes.route.js"
 
 import path from 'path'
 import cors from 'cors'
@@ -52,6 +53,7 @@ app.use('/api/profile', profileRoutes)
 app.use('/api/post', postRoutes)
 app.use('/api/interview', interviewRoutes)
 app.use('/api/feed', feedRoutes)
+app.use('/api/notes', notesRoutes)
 app.use('/api/data', dataRoutes)
 
 app.use((err, req, res, next)=>{

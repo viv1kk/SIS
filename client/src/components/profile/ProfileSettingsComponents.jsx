@@ -50,7 +50,7 @@ export const EditProfile = ()=>{
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
-        setFormData({ ...formData, [e.target.id] : reader.result}) // upload the image to backend
+        setFormData({ ...formData, [e.target.id] : reader.result, fileType : e.target.files[0].type, fileExt : e.target.files[0].name.split('.').pop()}) // upload the image to backend
       };
       if (e.target.files[0]) {
         reader.readAsDataURL(e.target.files[0]);
@@ -111,8 +111,8 @@ export const EditProfile = ()=>{
           <input type="text" onChange={handleChange} id="fullName" placeholder='Full Name' className='p-3 rounded-lg text-gray-800'/>
           {/* <input type="email" placeholder='Email' className='p-3 rounded-lg text-gray-800'/> */}
           {/* <input type="password" placeholder='Password' className='p-3 rounded-lg text-gray-800'/>                     */}
-          <select id="semester" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 ">
-            <option value={null} selected disabled>Semester</option>
+          <select id="semester" defaultValue={""} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 ">
+            <option value={""} disabled>Semester</option>
             <option value={1}>1</option>
             <option value={2}>2</option>
             <option value={3}>3</option>

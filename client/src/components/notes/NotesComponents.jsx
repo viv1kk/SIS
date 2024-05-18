@@ -5,7 +5,7 @@ export const UploadComponent = ()=>{
   const subject = useRef(null);
   const semester = useRef(null);
   const fileName = useRef(null);
-  
+  const fileDesc = useRef(null);
 
   const [sem, setSem] = useState('1');
   const [sub, setSub] = useState(null)
@@ -75,11 +75,13 @@ export const UploadComponent = ()=>{
         dataDoc = { ...dataDoc, 
           subjectCode : sub,
           fileName :  e.target.files[0].name.split('.').slice(0, -1).join('.'),
+          fileExt  : e.target.files[0].name.split('.').pop(),
           fileDescription : "",
           fileType : e.target.files[0].type
         }
         dataDoc = {...dataDoc, [e.target.id] : reader.result}
         fileName.current.value = dataDoc.fileName
+        fileDesc.current.value = dataDoc.fileDescription
         setFormData(dataDoc)
         // console.log(dataDoc)
       };
@@ -88,10 +90,10 @@ export const UploadComponent = ()=>{
 
   const handleUploadSubmit = async()=>{
     if(!formData.fileData || !formData.fileType || !formData.subjectCode){
-      // console.log(formData)
       alert("Error with data")
       return;
     }
+    console.log(formData)
     const res = await fetch('/api/notes/uploadFile', {
       method : 'POST',
       headers : { 
@@ -151,7 +153,7 @@ export const UploadComponent = ()=>{
             </label>
             <input type="text" ref={fileName} onChange={handleFormChange} id="fileName" className='border-2 border-solid rounded-md w-96 p-2 focus:outline-gray-400' placeholder='Rename the File (without extension)' />
           </div>
-            <textarea name="" onChange={handleFormChange} id="fileDescription" className=' w-3/4 border-solid border-2 border-gray-200 rounded-2xl p-3 focus:outline-gray-400' cols="30" rows="2"  placeholder="Describe the content inside the File, any suggestions (optional)"></textarea>
+            <textarea ref={fileDesc} name="" onChange={handleFormChange} id="fileDescription" className=' w-3/4 border-solid border-2 border-gray-200 rounded-2xl p-3 focus:outline-gray-400' cols="30" rows="2"  placeholder="Describe the content inside the File, any suggestions (optional)"></textarea>
             <button onClick={handleUploadSubmit} className='inline-flex mt-2 text-md items-center px-3 py-2 font-medium text-center w-fit text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'>Confirm Upload</button>
           </div>
         </div>

@@ -31,13 +31,13 @@ export const generateUniqueFileName = (ext) =>{
   }
 
 
-  export const s3ImageUpload = (buf, key)=>{
+  export const s3Upload = (buf, key, type)=>{
     let s3Bucket = new AWS.S3( { params: {Bucket: 'sis.storage'} } );
     let data = {
       Key: key, 
       Body: buf,
       ContentEncoding: 'base64',
-      ContentType: 'image/jpeg'
+      ContentType: type
     };
 
     s3Bucket.putObject(data, function(err, data){

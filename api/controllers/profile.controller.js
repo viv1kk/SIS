@@ -1,6 +1,6 @@
 import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js'
-import { generateUniqueFileName, splitAndTrim, s3ImageUpload, generateS3ImageUrl } from '../utils/utilityFunctions.js';
+import { generateUniqueFileName, splitAndTrim, s3Upload, generateS3ImageUrl } from '../utils/utilityFunctions.js';
 
 export const updateProfile = async(req, res, next)=>{
       try {
@@ -12,9 +12,9 @@ export const updateProfile = async(req, res, next)=>{
 
         if(req.body.profilePicture){
             const uplaodPFP = ()=>{
-              const pfpname = generateUniqueFileName('jpeg')
-              let buf = Buffer.from(req.body.profilePicture.replace(/^data:image\/\w+;base64,/, ""),'base64')
-              s3ImageUpload(buf, `profilePictures/${pfpname}`)
+              const pfpname = generateUniqueFileName(req.body.fileExt)
+              let buf = Buffer.from(req.body.profilePicture.replace(`data:${req.body.fileType};base64,`, ""),'base64')
+              s3Upload(buf, `profilePictures/${pfpname}`, req.body.fileType)
               return pfpname
             }
             console.log("profile picture uploading")
