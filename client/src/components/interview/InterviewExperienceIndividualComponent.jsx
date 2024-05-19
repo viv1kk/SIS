@@ -41,7 +41,7 @@ export const ProfileInfo = ({profileId})=>{
         }
     })
     return (
-        <div className="flex flex-col items-center p-3 max-w-[300px] max-w-[300px] bg-zinc-200 rounded-xl self-start">
+        <div className="flex flex-col items-center p-3 max-w-[300px] bg-zinc-200 rounded-xl self-start">
             <img src={profile?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
             <span className="text-gray-600 font-bold text-2xl">{profile?.fullName}</span>
             <div className="flex flex-col flex-wrap m-3 mt-6 gap-2 bg-black/30 min-w-[95%] p-3 text-white rounded-xl">
