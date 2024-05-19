@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
 import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { toast, Toaster }  from 'react-hot-toast'
+import { differenceInCalendarMonths } from "rsuite/esm/utils/dateUtils"
 
 export const ProfileInfo = ({profileId})=>{
     const [profile, setProfile] = useState({})
@@ -15,8 +17,9 @@ export const ProfileInfo = ({profileId})=>{
                 body : JSON.stringify({userId : profileId})
                 })
                 const data = await res.json()
-                if(data.success === false){
-                    console.log("Failed to Fetch Profile Data!")
+                if(!data || data.success === false){
+                    console.log(data)
+                    toast.error((data?.message)?data.message:"Error Fetching user data!")
                     return
                 }
                 else{
@@ -25,12 +28,14 @@ export const ProfileInfo = ({profileId})=>{
                 }
             }
             catch(e){
+                toast.error((e.message)?e.message:"Error Fetching user data!")
                 console.log(e);
             }
         }
         
         useEffect(()=>{
-            getProfileData(profileId)
+            if(profileId)
+                getProfileData(profileId)
         },[profileId])
     return (
         <div className="flex flex-col items-center p-3 max-w-[300px] max-w-[300px] bg-zinc-200 rounded-xl self-start">

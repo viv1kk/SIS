@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import {useState, useEffect} from 'react'
+import { toast, Toaster }  from 'react-hot-toast'
 
 export const InterviewPostCard = (props) => {
 
@@ -29,11 +30,13 @@ export const InterviewPostCard = (props) => {
         body : JSON.stringify({ userId : props.author})
       });
     const userData = await response.json();
+    if(!userData){
+      toast.error("Error Fetching User data!")
+    }
     return userData
-    // Update posts state with new posts
-    
-    } catch (error) {
-    console.error('Error fetching new posts:', error);
+    // Update posts state with new posts  
+  } catch (error) {
+    toast.error((error?.message)?error.message:"Error Fetching User data!")
     }
   };
 

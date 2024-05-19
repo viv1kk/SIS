@@ -1,6 +1,7 @@
-import { useParams } from 'react-router-dom'
+import { useFetcher, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { ProfileInfo, InterviewExperiencePost } from '../components/interview/InterviewExperienceIndividualComponent';
+import { toast, Toaster }  from 'react-hot-toast'
 
 const InterviewExperienceIndividual = () => {
     const params = useParams()
@@ -16,18 +17,21 @@ const InterviewExperienceIndividual = () => {
             body : JSON.stringify({ postId })
           });
         const post = await response.json();
+        if(!post)
+          toast.error("Error fetching new posts")
 
-        // Update posts state with new posts
         setPost(post);
         } catch (error) {
-        console.error('Error fetching new posts:', error);
+          toast.error("Error fetching new posts")
+
+          console.error('Error fetching new posts:', error);
         }      
     }
   
     useEffect(()=>{
-      fetchPost(params.post_id)
-    }, [params.post_id])
-
+      const id = params.post_id
+      fetchPost(id)
+    }, [])
 
   return (
     // <StickyScrollingLayout/>
