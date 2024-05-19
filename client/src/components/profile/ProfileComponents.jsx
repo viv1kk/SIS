@@ -277,11 +277,11 @@ const Post = ({post}) =>{
                         {
                             (post.userId == currentUser?._id+"")?
                             <Dropdown renderToggle={renderToggle} placement="bottomEnd" className="">
-                                <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
-                                    <Link onClick={handleInitEdit}><Dropdown.Item>Edit Post</Dropdown.Item></Link>
+                                <Dropdown.Item style={{ width: 120 }}>
+                                    <Link onClick={handleInitEdit} className="px-1">Edit Post</Link>
                                 </Dropdown.Item>
-                                <Dropdown.Item panel style={{ padding: 2, width: 100 }}>
-                                    <Link onClick={handleDeletePost}><Dropdown.Item>Delete Post</Dropdown.Item></Link>
+                                <Dropdown.Item style={{ width: 120 }}>
+                                    <Link onClick={handleDeletePost} className="px-1">Delete Post</Link>
                                 </Dropdown.Item>
                             </Dropdown>:<></>
 

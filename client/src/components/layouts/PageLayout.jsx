@@ -5,7 +5,7 @@ export const AuthenticatedPageLayout = ({children}) => {
     <div className="w-full min-w-full max-h-full min-h-screen bg-[#FAF9F6]">
         {/* {children[0]} */}
         <Header/>
-        <div className="flex flex-col items-center overflow-y-auto">
+        <div className="flex flex-col items-center overflow-y-auto max-h-full min-h-screen">
           {/* { children.map((child, ind)=>{return ind!==0 && child})} */}
           {children}
         </div>

@@ -10,7 +10,7 @@ const Notes = () => {
     }
 
   return (
-    <div className='flex flex-col bg-white p-9 my-9 w-4/5 rounded-xl h-max shadow-2xl'>
+    <div className='flex flex-col bg-white p-9 my-9 w-4/5 rounded-xl  shadow-2xl'>
         <h1 className='font-bold text-3xl text-gray-700 font-mono'>Access Study Material</h1>
         <hr className='border-2 my-5 border-black'/>
         <p className='text-xl text-gray-600'>Access the extensive catalog of handwritten self-study and lecture notes shared by students for the latest B.Tech curriculum.</p>

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom' 
 // import {DownloadListitemComponent} from '../components/notes/NotesComponents';
 import { useSelector} from "react-redux"
+import { toast, Toaster }  from 'react-hot-toast'
 
 
 export const UploadComponent = ()=>{
@@ -26,15 +27,14 @@ export const UploadComponent = ()=>{
       })
       const r = await res.json()
       // console.log(r)
-      if(r.success === false){
-          console.log("Failed to create the post!")
-          return 
+      if(!r || r.success === false){
+        toast.error((r?.message)?r.message:"Couldn't fetch Subject Data!")
+        return 
       }
       return r
     }
     catch(e){
-        // notify that update failed
-        console.log(e)
+      toast.error((e?.message)?e.message:"Couldn't fetch Subject Data!")
     }
   }
   useEffect(()=>{
@@ -95,11 +95,11 @@ export const UploadComponent = ()=>{
   }
 
   const handleUploadSubmit = async()=>{
-    if(!formData.fileData || !formData.fileType || !formData.subjectCode){
-      alert("Error with data")
+    if(!formData.fileData || !formData.fileType || !formData.subjectCode || formData.fileName){
+      toast.error("Error! Please fill the required Fields")
       return;
     }
-    console.log(formData)
+    const id = toast.loading("Uploading File...")
     const res = await fetch('/api/notes/uploadFile', {
       method : 'POST',
       headers : { 
@@ -110,9 +110,12 @@ export const UploadComponent = ()=>{
 
     const data = await res.json()
     if(data.success === false){
+      toast.error((data?.message)?data.message:"Error Uploading File!", { id })
       // error uploading file
+      return
     }
     else{
+      toast.success((data?.message)?data.message:"File Uploaded!", { id })
       // file uploaded successfully
     }
   }
@@ -189,15 +192,14 @@ export const DownloadComponent = ()=>{
       })
       const r = await res.json()
       // console.log(r)
-      if(r.success === false){
-          console.log("Failed to create the post!")
+      if(!r || r.success === false){
+        toast.error((r?.message)?r.message:"Error Fetching subject data!")
           return 
       }
       return r
     }
     catch(e){
-        // notify that update failed
-        console.log(e)
+        toast.error((e?.message)?e.message:"Error Fetching subject data!")
     }
   }
 
@@ -212,15 +214,17 @@ export const DownloadComponent = ()=>{
       })
       const r = await res.json()
       // console.log(r)
-      if(r.success === false){
-          console.log("Failed to fetch the notes List!")
+      if(!r || r.success === false){
+          toast.error((r?.message)?r.message:"Failed to fetch Documents")
           return 
       }
       return r
     }
     catch(e){
+      toast.error((e?.message)?e.message:"Failed to fetch Documents")
+
         // notify that update failed
-        console.log(e)
+        // console.log(e)
     }
   }
 
@@ -228,7 +232,7 @@ export const DownloadComponent = ()=>{
   useEffect(()=>{
     getSubjectData().then(x =>{
       let d = []
-      x.forEach(element => {
+      x?.forEach(element => {
         if (element.semester === parseInt(sem)){
           d = [...d, element]
         }
@@ -242,13 +246,14 @@ export const DownloadComponent = ()=>{
 
   // console.log(data)
     useEffect(()=>{
-      console.log("Now fetch the list from server")
-      getNotesList().then(x =>{
-        if(x && x.length > 0)
-          setNotesList(x)
-        else setNotesList([])
-      })
-    },[sub])
+      if(sub){
+        getNotesList().then(x =>{
+          if(x && x.length > 0)
+            setNotesList(x)
+          else setNotesList([])
+        })
+      }
+    },[sub, data])
 
     const handleSem = (e)=>{
         setSem(e.target.value);
@@ -319,8 +324,6 @@ const DownloadListitemComponent = ({data}) => {
               
             </div>
         </div>
-
-    
     </div>    
     </Link>
   )
