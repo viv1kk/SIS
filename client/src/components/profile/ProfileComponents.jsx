@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 import { Dropdown, Avatar } from 'rsuite'
+import { toast, Toaster }  from 'react-hot-toast'
 
 export const ProfileInfo = ()=>{
     const [user, setUser] = useState({})
@@ -26,11 +27,10 @@ export const ProfileInfo = ()=>{
                 })
                 const data = await res.json()
                 if(data.success === false){
-                    console.log("Failed to Fetch Profile Data!")
+                    toast.error("Failed to Fetch Profile!")
                     return
                 }
                 else{
-                    console.log(data)
                     setUser(data)
                 }
             }
@@ -107,6 +107,7 @@ const MakeNewPost = ()=>{
 
     const handleSubmit = async (e)=>{
         e.preventDefault();
+        const id = toast.loading("Creating Post...")
         const res = await fetch('/api/post/createPost', {
         method : 'POST',
         headers : { 
@@ -116,9 +117,11 @@ const MakeNewPost = ()=>{
         })
         const data = await res.json()
         setFormData({})
-        if(data.success === false){
-            console.log("Failed to create the post!")
+        if(!data || data.success === false){
+            toast.error((data?.message)?data.message:"Error Creating Post!", { id })
             return
+        }else{
+            toast.success((data?.message)?data.message:"Post Created!", { id })
         }
     }
     return (
@@ -150,8 +153,8 @@ const Post = ({post}) =>{
             body : JSON.stringify({userId})
             })
             const data = await res.json()
-            if(data.success === false){
-                console.log("Failed to create the post!")
+            if(!data || data.success === false){
+                toast.error("Failed to Fetch Posts!")
                 return 
             }
             return data;
@@ -201,6 +204,7 @@ const Post = ({post}) =>{
         }
 
         try{
+            const id = toast.loading("Updating Post...")
             const res = await fetch('/api/post/editPost', {
             method : 'POST',
             headers : { 
@@ -209,16 +213,17 @@ const Post = ({post}) =>{
             body : JSON.stringify(data)
             })
             const r = await res.json()
-            if(r.success === false){
-                console.log("Failed to create the post!")
+            if(!r || r.success === false){
+                toast.error((r?.message)?r.message:"Error Updating Post!", { id })
                 return 
             }
             setEditMode(!editMode)
             setEditedPost({})
+            toast.success((r?.message)?r.message:"Post Updated!", { id })
             return r;
         }
         catch(e){
-            // notify that update failed
+            toast.error(e.message)
             console.log(e)
         }
     }
@@ -230,6 +235,7 @@ const Post = ({post}) =>{
     
     const handleDeletePost = async()=>{
         try{
+            const id = toast.loading("Deleting Post...")
             const res = await fetch('/api/post/deletePost', {
             method : 'POST',
             headers : { 
@@ -240,16 +246,18 @@ const Post = ({post}) =>{
 
             const r = await res.json()
             if(r.success === false){
-                console.log("Failed to create the post!")
+                toast.error((r?.message)?r.message:"Error Deleting Post!", { id })
                 return 
             }
             setEditMode(false)
             setEditedPost({})
+            toast.success((r?.message)?r.message:"Post Deleted!", { id })
             return r
         }
         catch(e){
+            toast.error(e.message)
             // notify that update failed
-            // console.log(e)
+            console.log(e)
         }
     }
 
@@ -352,11 +360,10 @@ const ShowPosts = ()=>{
             setPosts([])
             // setPosts(newPosts)
         } catch (error) {
-        console.error('Error fetching new posts:', error);
+            toast.error(error.message)
+            console.error('Error fetching new posts:', error);
         }
     };
-
-    console.log(posts)
 
     useEffect(() => {
         fetchNewPosts(id)

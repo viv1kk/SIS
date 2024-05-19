@@ -31,7 +31,7 @@ export const editPost = async (req, res, next)=>{
             },
             { new: true }
           );
-        res.status(201).json({message:"Post Created Successfully", updatedPost})
+        res.status(201).json({message:"Post Edited Successfully", updatedPost})
     }
     catch(error){
         console.log(error)
@@ -66,7 +66,7 @@ export const userPosts = async (req, res, next)=>{
         const userId= req.body.userId;
         const getPosts = await Post.find({ userId })
         .sort({ updatedAt: -1 }) // Sort by createdAt field in descending order (latest first)
-        .limit(10) // Limit to 10 entries
+        // .limit() // Limit to 10 entries
         res.status(200).json(getPosts)
    }
     catch(error){

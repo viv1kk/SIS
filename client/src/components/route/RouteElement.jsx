@@ -11,7 +11,7 @@ export const AnonymousRoute = () => {
 export const AuthenticatedRoute = () => {
     const {currentUser} = useSelector(state=>state.user)
 
-    return currentUser ? <AuthenticatedPageLayout><Outlet/></AuthenticatedPageLayout> : <Navigate to="/sign-in" replace />
+    return (currentUser && currentUser._id !== "") ? <AuthenticatedPageLayout><Outlet/></AuthenticatedPageLayout> : <Navigate to="/sign-in" replace />
 }
 
 export const IndependentRoute = () => {

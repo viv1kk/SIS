@@ -2,6 +2,7 @@ import { useSelector, useDispatch} from "react-redux"
 import { useState,useRef } from "react"
 import { updateSuccess } from '../../redux/user/userSlice'
 import { Link } from 'react-router-dom'
+import { toast, Toaster }  from 'react-hot-toast'
 
 export const ProfileSummary = ()=>{
   const {currentUser} = useSelector(state=>state.user)
@@ -69,6 +70,7 @@ export const EditProfile = ()=>{
   const handleSubmit = async (e)=>{
     e.preventDefault();
     
+    const id = toast.loading("Updating...")
     const res = await fetch('/api/profile/update', {
       method : 'POST',
       headers : { 
@@ -76,19 +78,23 @@ export const EditProfile = ()=>{
       },
       body : JSON.stringify(formData)
     })
-
     const data = await res.json()
-    if(data.success === false){
+    
+    if(!data || data.success === false){
+      toast.error((data?.message)?data.message:"Updation Failed!", { id })
       return
     }
     else{
+      toast.success("Profile Updated", { id })
       dispatch(updateSuccess(data))
+      // console.log(data)
     }
-    console.log(data)
 
   }
     return(
         <div className='flex flex-col flex-1 basis-9/12 min-w-[500px] bg-zinc-200 rounded-xl p-3'>
+            {/* <Toaster position='top-right' toastOptions={{duration: 2000}} /> */}
+
         <h1 className='m-5 mb-3 text-xl font-semibold text-zinc-700'>Update Profile Information</h1>
         <hr className="my-2 border-t-2 border-2 border-gray-400" />
         <form className='flex flex-col gap-3 p-4' onSubmit={handleSubmit}>

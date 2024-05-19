@@ -13,10 +13,12 @@ import InterviewExperienceIndividual from './pages/InterviewExperienceIndividual
 import Notes from './pages/Notes'
 import PYQ from './pages/PYQ'
 import Timeline from './pages/Timeline'
+import {Toaster} from 'react-hot-toast'
 
 const App = ()=>{
   return (
     <BrowserRouter>
+    <Toaster position='bottom-right' toastOptions={{duration: 2000}} />
       <Routes>
         <Route element={<AnonymousRoute />}>
           <Route path="/" element={<Signin />} />
