@@ -22,10 +22,8 @@ export const ProfileInfo = ({profileId})=>{
                     toast.error((data?.message)?data.message:"Error Fetching user data!")
                     return
                 }
-                else{
+                return data
                     // console.log(id)
-                    setProfile(data)
-                }
             }
             catch(e){
                 toast.error((e.message)?e.message:"Error Fetching user data!")
@@ -33,10 +31,15 @@ export const ProfileInfo = ({profileId})=>{
             }
         }
         
-        useEffect(()=>{
-            if(profileId)
-                getProfileData(profileId)
-        },[profileId])
+    useEffect(()=>{
+        if(profileId){
+            getProfileData(profileId)
+            .then(data=>{
+                if(data) setProfile(data)
+            })
+
+        }
+    })
     return (
         <div className="flex flex-col items-center p-3 max-w-[300px] max-w-[300px] bg-zinc-200 rounded-xl self-start">
             <img src={profile?.profilePicture} alt="Profile Picture" className="w-[200px] rounded-full my-3 cursor-pointer border-2 hover:border-8 duration-800 hover:brightness-90 hover:transition-all"/>
