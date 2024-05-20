@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom' 
 // import {DownloadListitemComponent} from '../components/notes/NotesComponents';
 import { useSelector} from "react-redux"
+import { toast, Toaster }  from 'react-hot-toast'
 
 export const UploadComponent = ()=>{
   const subject = useRef(null);
   const semester = useRef(null);
   const examTypeRef = useRef(null)
   const fileName = useRef(null);
-  const fileDesc = useRef(null);
   const {currentUser } = useSelector(state=>state.user)
   
   const [sem, setSem] = useState(()=>((currentUser?.semester)?currentUser.semester:"1"))
@@ -26,16 +26,15 @@ export const UploadComponent = ()=>{
       }
       })
       const r = await res.json()
-      // console.log(r)
-      if(r.success === false){
-          console.log("Failed to create the post!")
-          return 
+      if(!r || r.success === false){
+        toast.error((r?.message)?r.message:"Couldn't fetch Subject Data!")
+        return 
       }
       return r
     }
     catch(e){
         // notify that update failed
-        console.log(e)
+        toast.error((e?.message)?e.message:"Couldn't fetch Subject Data!")
     }
   }
   
@@ -95,17 +94,18 @@ export const UploadComponent = ()=>{
         dataDoc = {...formData, ...dataDoc, [e.target.id] : reader.result}
         fileName.current.value = dataDoc.fileName
         setFormData(dataDoc)
-        // console.log(dataDoc)
       };
     }
   }
 
   const handleUploadSubmit = async()=>{
-    if(!formData.fileData || !formData.fileType || !formData.subjectCode){
+    if(!formData.fileData || !formData.fileType || !formData.subjectCode || !formData.fileName){
       alert("Error with data")
+      toast.error("Error! Please fill the required Fields")
       return;
     }
-    console.log(formData)
+    // console.log(formData)
+    const id = toast.loading("Uploading File...")
     const res = await fetch('/api/pyq/uploadFile', {
       method : 'POST',
       headers : { 
@@ -116,9 +116,12 @@ export const UploadComponent = ()=>{
 
     const data = await res.json()
     if(data.success === false){
+      toast.error((data?.message)?data.message:"Error Uploading File!", { id })
+      return
       // error uploading file
     }
     else{
+      toast.success((data?.message)?data.message:"File Uploaded!", { id })
       // file uploaded successfully
     }
   }
@@ -204,14 +207,14 @@ export const DownloadComponent = ()=>{
       const r = await res.json()
       // console.log(r)
       if(r.success === false){
-          console.log("Failed to create the post!")
-          return 
+        toast.error((r?.message)?r.message:"Couldn't fetch Subject Data!")
+        return 
       }
       return r
     }
     catch(e){
         // notify that update failed
-        console.log(e)
+        toast.error((e?.message)?e.message:"Couldn't fetch Subject Data!")
     }
   }
 
@@ -226,14 +229,16 @@ export const DownloadComponent = ()=>{
       })
       const r = await res.json()
       // console.log(r)
-      if(r.success === false){
-          console.log("Failed to fetch the notes List!")
-          return 
+      if(r || r.success === false){
+        toast.error((r?.message)?r.message:"Failed to fetch Documents")
+        console.log("Failed to fetch the notes List!")
+        return 
       }
       return r
     }
     catch(e){
         // notify that update failed
+        toast.error((e?.message)?e.message:"Failed to fetch Documents")
         console.log(e)
     }
   }
@@ -253,14 +258,16 @@ export const DownloadComponent = ()=>{
 
   // console.log(data)
     useEffect(()=>{
-      console.log("Now fetch the list from server")
+      // console.log("Now fetch the list from server")
+      if(!sub || !examType) return
+      
       getPYQList().then(x =>{
         if(x && x.length > 0)
           setPYQList(x)
         else setPYQList([])
         // console.log(x)
       })
-    },[sub ,examType])
+    },[sub,examType])
 
     useEffect(() => {
       if(data && data.length > 0)
@@ -334,7 +341,7 @@ const DownloadListitemComponent = ({data}) => {
     "ppt" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0MLmAYQ6_XXQEuuWXY741t3cZexe5fFBFUwtwgJWmGA&s",
     "pptx" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0MLmAYQ6_XXQEuuWXY741t3cZexe5fFBFUwtwgJWmGA&s"
   }
-  console.log(data)
+  // console.log(data)
   return (
     <Link to={data.fileLink} target="_blank" rel="noopener noreferrer">
       <div  className='flex flex-row justify-between items-center w-full p-3 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>

@@ -95,7 +95,8 @@ export const UploadComponent = ()=>{
   }
 
   const handleUploadSubmit = async()=>{
-    if(!formData.fileData || !formData.fileType || !formData.subjectCode || formData.fileName){
+    if(!formData.fileData || !formData.fileType || !formData.subjectCode || !formData.fileName){
+      console.log(formData)
       toast.error("Error! Please fill the required Fields")
       return;
     }
@@ -193,13 +194,13 @@ export const DownloadComponent = ()=>{
       const r = await res.json()
       // console.log(r)
       if(!r || r.success === false){
-        toast.error((r?.message)?r.message:"Error Fetching subject data!")
+        toast.error((r?.message)?r.message:"Couldn't fetch Subject Data!")
           return 
       }
       return r
     }
     catch(e){
-        toast.error((e?.message)?e.message:"Error Fetching subject data!")
+      toast.error((e?.message)?e.message:"Couldn't fetch Subject Data!")
     }
   }
 
@@ -312,9 +313,9 @@ const DownloadListitemComponent = ({data}) => {
   }
   return (
     <Link to={data.fileLink} target="_blank" rel="noopener noreferrer">
-    <div  className='flex flex-row justify-between items-center w-full p-5 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
+    <div className='flex flex-row justify-between items-center w-full p-3 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
         <div className='flex items-center w-full'>
-            <img className="inline w-14 mr-3" src={ext[data.fileExt]} alt="" />
+            <img className="inline w-10 mr-3" src={ext[data.fileExt]} alt="" />
             {/* <i className={`fa-solid fa-file-${data.fileExt} fa-2xl mr-3`}></i> */}
             <div className='flex flex-col w-full'>
               <span className="text-md mx-2 font-semibold">
