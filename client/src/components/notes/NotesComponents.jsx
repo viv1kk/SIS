@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import { useSelector} from "react-redux"
 import { toast, Toaster }  from 'react-hot-toast'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDownload, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+
 
 export const UploadComponent = ()=>{
   const subject = useRef(null);
@@ -290,7 +293,7 @@ export const DownloadComponent = ()=>{
                 </select>
             </div>  
         </div>
-        <div className=' w-11/12 flex flex-col gap-2 self-center my-7 border-2 border-gray-200 p-5 cursor-pointer'>
+        <div className=' w-11/12 flex flex-col gap-2 self-center my-7 border-2 border-gray-200 p-5'>
             { 
             // console.log(sub)
                 notesList?.map((el, ind)=>(
@@ -312,8 +315,7 @@ const DownloadListitemComponent = ({data}) => {
     "pptx" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0MLmAYQ6_XXQEuuWXY741t3cZexe5fFBFUwtwgJWmGA&s"
   }
   return (
-    <Link to={data.fileLink} target="_blank" rel="noopener noreferrer">
-    <div className='flex flex-row justify-between items-center w-full p-3 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
+    <div className='flex flex-row justify-between items-center w-full p-3 hover:transition-all hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
         <div className='flex items-center w-full'>
             <img className="inline w-10 mr-3" src={ext[data.fileExt]} alt="" />
             {/* <i className={`fa-solid fa-file-${data.fileExt} fa-2xl mr-3`}></i> */}
@@ -321,11 +323,15 @@ const DownloadListitemComponent = ({data}) => {
               <span className="text-md mx-2 font-semibold">
                   {`${data.fileName}.${data.fileExt}`}
               </span>
-              <p className='p-2 text-gray-500'>{data.fileDescription}</p>
+              {
+                (data.fileDescription)?<p className='p-2 text-gray-500 line-clamp-2'>{data.fileDescription}</p>:<></>
+              }
               
             </div>
+            <Link to={data.fileLink} target="_blank" rel="noopener noreferrer">
+              <FontAwesomeIcon className="text-gray-600 mx-1 px-2 text-2xl" icon={faDownload} />
+            </Link>
         </div>
     </div>    
-    </Link>
   )
 }

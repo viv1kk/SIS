@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import { useSelector} from "react-redux"
 import { toast, Toaster }  from 'react-hot-toast'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDownload, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+
 export const UploadComponent = ()=>{
   const subject = useRef(null);
   const semester = useRef(null);
@@ -229,7 +232,7 @@ export const DownloadComponent = ()=>{
       })
       const r = await res.json()
       // console.log(r)
-      if(r || r.success === false){
+      if(!r || r.success === false){
         toast.error((r?.message)?r.message:"Failed to fetch Documents")
         console.log("Failed to fetch the notes List!")
         return 
@@ -259,7 +262,10 @@ export const DownloadComponent = ()=>{
   // console.log(data)
     useEffect(()=>{
       // console.log("Now fetch the list from server")
-      if(!sub || !examType) return
+      if(!sub || sub.length <= 0 || !examType) {
+        setPYQList([])
+        return
+      }
       
       getPYQList().then(x =>{
         if(x && x.length > 0)
@@ -267,7 +273,7 @@ export const DownloadComponent = ()=>{
         else setPYQList([])
         // console.log(x)
       })
-    },[sub,examType])
+    },[data, sub,examType])
 
     useEffect(() => {
       if(data && data.length > 0)
@@ -278,6 +284,7 @@ export const DownloadComponent = ()=>{
 
     const handleSem = (e)=>{
         setSem(e.target.value);
+        setSub("")
     }
     const handleSub = (e)=>{
         setSub(e.target.value);
@@ -343,8 +350,7 @@ const DownloadListitemComponent = ({data}) => {
   }
   // console.log(data)
   return (
-    <Link to={data.fileLink} target="_blank" rel="noopener noreferrer">
-      <div  className='flex flex-row justify-between items-center w-full p-3 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
+    <div  className='flex flex-row justify-between items-center w-full p-3 hover:outline rounded-xl border-2 text-gray-600 outline-gray-200 shadow-sm hover:shadow-md'>
           <div className='flex items-center w-full'>
               <img className="inline w-10 mr-3" src={ext[data.fileExt]} alt="" />
               {/* <i className={`fa-solid fa-file-${data.fileExt} fa-2xl mr-3`}></i> */}
@@ -352,11 +358,13 @@ const DownloadListitemComponent = ({data}) => {
                 <span className="text-md mx-2 font-semibold">
                     {`${data.fileName}.${data.fileExt}`}
                 </span>
-                  <span className="text-sm mx-2 font-semibold">{`${data.examType.toUpperCase()} - ${data.examYear}`}
-                </span>                  
+                  <span className="text-sm mx-2 font-semibold">{`${data.examType.toUpperCase()} - ${data.examYear}`}</span>  
+                
               </div>
+        <Link to={data.fileLink} target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon className="text-gray-600 mx-1 px-2 text-2xl" icon={faDownload} />
+        </Link>
           </div>
       </div>    
-    </Link>
   )
 }
