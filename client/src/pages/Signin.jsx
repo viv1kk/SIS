@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { signInStart, signInFailure, signInSuccess } from '../redux/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast, Toaster }  from 'react-hot-toast'
 
 const Signin = () => {
   const [formData, setFormData] = useState({})
@@ -18,6 +19,7 @@ const Signin = () => {
 
     try{
       dispatch(signInStart())
+      const id = toast.loading("Sining In")
       const res = await fetch('/api/auth/signin', {
         method : 'POST',
         headers : { 
@@ -26,15 +28,17 @@ const Signin = () => {
         body : JSON.stringify(formData)
       })
       const data = await res.json()
-      if(data.success === false){
+      if(!data || data.success === false){
         dispatch(signInFailure(data))
+        toast.error((data?.message)?data.message:"Error Signing In!", { id })
         return;
       }
       dispatch(signInSuccess(data))
+      toast.success((data?.message)?data.message:"Signed In!", { id })
       navigate('/')
     }
     catch(err){
-      console.log(err)
+      toast.error((err?.message)?err.message:"Error Signing in!")
       dispatch(signInFailure(err))
     }
   }

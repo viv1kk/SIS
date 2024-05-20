@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { useDispatch } from 'react-redux'
+import { toast, Toaster }  from 'react-hot-toast'
 
 const Signup = () => {
   const [formData, setFormData] = useState({})
@@ -12,6 +13,7 @@ const Signup = () => {
 
   const handleSignup = async(e)=>{
     e.preventDefault();
+    const id = toast.loading("Creating User...")
     const res = await fetch('/api/auth/signup', {
       method : 'POST',
       headers : { 
@@ -20,9 +22,11 @@ const Signup = () => {
       body : JSON.stringify(formData)
     })
     const data = await res.json()
-    if(data.success === false){
+    if(!data || data.success === false){
+      toast.error((data?.message)?data.message:"Error Creating User!", { id })
       return
     }
+    toast.success((data?.message)?data.message:"Signup Successful!", { id })
     navigate('/')
   }
 
