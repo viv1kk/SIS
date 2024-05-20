@@ -26,7 +26,7 @@ export const ProfileInfo = ()=>{
                 body : JSON.stringify({userId : id})
                 })
                 const data = await res.json()
-                if(data.success === false){
+                if(!data || data.success === false){
                     toast.error("Failed to Fetch Profile!")
                     return
                 }

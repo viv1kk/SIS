@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk'
-import s3_cred from '../config/s3_config.json' assert { type: 'json' };
-AWS.config.update(s3_cred);
+import s3_cred from '../config/s3_config.js';
+
+AWS.config.update(s3_cred['s3_cred']);
 
 
 export const generateUniqueFileName = (ext) =>{
