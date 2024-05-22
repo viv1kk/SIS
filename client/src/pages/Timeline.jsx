@@ -78,7 +78,7 @@ const Timeline = () => {
             
             {(timelineToggle)?<TimelineFeed/>:<></>}
         </div>
-        <div className='basis-3/12 bg-zinc-200 rounded-xl max-h-screen min-h-[200px] p-3 overflow-y-auto border-2 self-start'>
+        <div className='basis-3/12 bg-zinc-200 rounded-xl max-h-screen min-h-[200px] overflow-y-auto border-2 self-start'>
             <People data={people} searchToggle={searchToggle}/>
         </div>
         

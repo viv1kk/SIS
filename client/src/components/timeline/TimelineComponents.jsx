@@ -129,12 +129,12 @@ const Post = ({post}) =>{
 
 
 export const People = ({data, searchToggle})=>{
-    console.log(data)
+    // console.log(data)
     return (
         <div>
             
-            <h1 className="font-semibold ">{(searchToggle)?"Search Results!":"You Might Know!"}</h1>
-            <hr className="my-2 border-t-2 border-gray-400" />
+            <h1 className="font-semibold pt-3 px-4">{(searchToggle)?"Search Results!":"You Might Know!"}</h1>
+            <hr className="my-3 border-t-2 border-gray-300" />
             {
                 data?.map((person, index) => <Person data={person} key={index}/>)
             }
@@ -145,15 +145,15 @@ export const People = ({data, searchToggle})=>{
 
 const Person = ({data})=>{
     return (
-        <div className="flex justify-between items-center my-6">
+        <div className="flex justify-between items-center p-3 hover:bg-zinc-300">
             <div className="flex">
-                <img src={data.profilePicture} alt="" className="w-12 h-12 rounded-full"/>
+            <Link to={`/profile/${data._id}`}><img src={data.profilePicture} alt="" className="w-12 h-12 rounded-full"/></Link>
                 <div className="flex flex-col ml-2">
-                    <span className="font-bold">{data.fullName}</span>
+                <Link to={`/profile/${data._id}`}><span className="font-bold hover:underline">{data.fullName}</span></Link>
                     <small>{data.email}</small>
                 </div>
             </div>
-            <Link to={`/profile/${data._id}`} className="bg-zinc-600 text-white font-semibold px-3 py-2 rounded-full"><span>Profile</span></Link>
+            <Link to={`/profile/${data._id}`} className="bg-zinc-600 text-white font-semibold px-4 py-2 rounded-full"><span>Profile</span></Link>
         </div>
     )
 }
